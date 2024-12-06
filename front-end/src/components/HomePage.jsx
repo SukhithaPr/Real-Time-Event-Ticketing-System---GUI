@@ -32,7 +32,7 @@ const products = [
     }
 ]
 
-export default function Example() {
+export default function HomePage() {
     return (
         <div className="bg-white">
             <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
