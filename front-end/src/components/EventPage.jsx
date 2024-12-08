@@ -7,7 +7,7 @@ export default function EventPage() {
                 <img
                     src="https://scontent.fcmb2-2.fna.fbcdn.net/v/t39.30808-6/466505399_867358052217212_4911383765135743027_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeFGtuiyZtN57ePPxx1q4_4E4NPIjCBcw_3g08iMIFzD_ah0udyW7qdzUdBKCUOdpojQgdYlYG3g4E9D48Rq5FiO&_nc_ohc=XESBZJ9oPcMQ7kNvgEbGmNf&_nc_zt=23&_nc_ht=scontent.fcmb2-2.fna&_nc_gid=Ag54qd8CEzDwFG97bP2ZbnV&oh=00_AYB_OE-lJJ5gclA_YBfBy8845HE8dDlfGNPR6STryQzWkw&oe=6758C9A0"
                     alt="Event"
-                    className="rounded-lg shadow-lg w-full max-w-md"
+                    className="rounded-lg shadow-lg "
                 />
             </div>
             <div className='flex flex-col gap-5'>
