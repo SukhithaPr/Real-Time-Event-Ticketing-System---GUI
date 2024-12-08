@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
 
-import React from 'react';
-
 const LandingPage = () => {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen px-40 sm:px-80 bg-gray">
