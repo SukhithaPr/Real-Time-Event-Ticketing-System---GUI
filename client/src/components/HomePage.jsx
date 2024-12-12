@@ -10,7 +10,7 @@ const products = [
     {
         id: 2,
         name: 'Awarjana',
-        href: '#',
+        href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/Awarjana/Awarjana%201x1xx-1730088977503.jpg',
         imageAlt: "Front of men's Basic Tee in black.",
     },
@@ -18,7 +18,7 @@ const products = [
     {
         id: 3,
         name: 'Parampara',
-        href: '#',
+        href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/Parampara%20Live%20In%20Concert/1080%20x%201080%20DESIGN%201-1730370079854.jpg',
         imageAlt: "Front of men's Basic Tee in black.",
     },
@@ -26,7 +26,7 @@ const products = [
     {
         id: 4,
         name: 'SHAAN & SANKA LIVE IN SRI LANKA',
-        href: '#',
+        href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/SHAAN%20&%20SANKA%20LIVE%20IN%20SRI%20LANKA/without%20all%20details%201080x1080%20(2)-1730545551510.jpg',
         imageAlt: "Front of men's Basic Tee in black.",
     }

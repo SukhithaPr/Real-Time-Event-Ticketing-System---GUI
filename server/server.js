@@ -24,14 +24,12 @@ function logMessage(message) {
 
 // Ticket class
 class Ticket {
-    constructor(ticketId, eventName, ticketPrice) {
+    constructor(ticketId) {
         this.ticketId = ticketId;
-        this.eventName = eventName;
-        this.ticketPrice = ticketPrice;
     }
 
     toString() {
-        return `Ticket ID: ${this.ticketId} | Event: ${this.eventName} | Price: Rs.${this.ticketPrice}`;
+        return `Ticket ID: ${this.ticketId}`;
     }
 }
 
@@ -93,7 +91,7 @@ class TicketPool {
     }
 }
 
-// Vendor and Customer classes
+// Vendor class
 class Vendor {
     constructor(vendorId, ticketPool, totalTickets, ticketReleaseRate) {
         this.vendorId = vendorId;
@@ -105,7 +103,7 @@ class Vendor {
     async start() {
         for (let i = 0; i < this.totalTickets; i++) {
             if (this.ticketPool.stopped) break;
-            const ticket = new Ticket(globalTicketId++, "Spandana", 2000);
+            const ticket = new Ticket(globalTicketId++);
             await this.ticketPool.addTicket(ticket, this.vendorId);
             await this.sleep(this.ticketReleaseRate * 1000);
         }
@@ -116,6 +114,7 @@ class Vendor {
     }
 }
 
+// Customer class
 class Customer {
     constructor(customerId, ticketPool, customerRetrievalRate, quantity) {
         this.customerId = customerId;
@@ -142,8 +141,19 @@ let ticketPool = null;
 
 app.post('/configureSystem', async (req, res) => {
     const { totalTickets, ticketReleaseRate, customerRetrievalRate, maximumCapacity } = req.body;
-    if (!totalTickets || !ticketReleaseRate || !customerRetrievalRate || !maximumCapacity) {
-        return res.status(400).send({ error: "Invalid configuration parameters" });
+
+    // Validate that all parameters are present and positive numbers
+    if (
+        !totalTickets ||
+        !ticketReleaseRate ||
+        !customerRetrievalRate ||
+        !maximumCapacity ||
+        totalTickets <= 0 ||
+        ticketReleaseRate <= 0 ||
+        customerRetrievalRate <= 0 ||
+        maximumCapacity <= 0
+    ) {
+        return res.status(400).send({ error: "All parameters must be positive numbers." });
     }
 
     ticketPool = new TicketPool(maximumCapacity, totalTickets);
@@ -155,19 +165,29 @@ app.post('/configureSystem', async (req, res) => {
     ];
 
     const customers = [
-        new Customer(1, ticketPool, customerRetrievalRate, totalTickets / 5),
-        new Customer(2, ticketPool, customerRetrievalRate, totalTickets / 5),
-        new Customer(3, ticketPool, customerRetrievalRate, totalTickets / 5),
-        new Customer(4, ticketPool, customerRetrievalRate, totalTickets / 5),
-        new Customer(5, ticketPool, customerRetrievalRate, totalTickets / 5),
+        new Customer(1, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
+        new Customer(2, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
+        new Customer(3, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
+        new Customer(4, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
+        new Customer(5, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
     ];
+
+    app.post('/stopSystem', (req, res) => {
+        if (!ticketPool) {
+            return res.status(503).send({ error: "System not running." });
+        }
+        ticketPool.stopped = true; // Stop the ticketPool
+        logMessage("System has been stopped manually.");
+        res.send({ message: "System stopped successfully" });
+    });
+
 
     logMessage("\nStarting system...\n");
 
     vendors.forEach(vendor => vendor.start());
     customers.forEach(customer => customer.start());
 
-    res.send({ message: "System configured successfully", metrics: ticketPool.getMetrics(), logs }); 
+    res.send({ message: "System configured successfully", metrics: ticketPool.getMetrics(), logs });
 });
 
 app.get('/metrics', (req, res) => {
