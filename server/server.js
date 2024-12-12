@@ -142,15 +142,14 @@ let ticketPool = null;
 app.post('/configureSystem', async (req, res) => {
     const { totalTickets, ticketReleaseRate, customerRetrievalRate, maximumCapacity } = req.body;
 
-    // Validate that all parameters are present and positive numbers
     if (
-        !totalTickets ||
-        !ticketReleaseRate ||
-        !customerRetrievalRate ||
+        !totalTickets || 
+        !ticketReleaseRate || 
+        !customerRetrievalRate || 
         !maximumCapacity ||
-        totalTickets <= 0 ||
-        ticketReleaseRate <= 0 ||
-        customerRetrievalRate <= 0 ||
+        totalTickets <= 0 || 
+        ticketReleaseRate <= 0 || 
+        customerRetrievalRate <= 0 || 
         maximumCapacity <= 0
     ) {
         return res.status(400).send({ error: "All parameters must be positive numbers." });
@@ -172,22 +171,21 @@ app.post('/configureSystem', async (req, res) => {
         new Customer(5, ticketPool, customerRetrievalRate, Math.ceil(totalTickets / 5)),
     ];
 
-    app.post('/stopSystem', (req, res) => {
-        if (!ticketPool) {
-            return res.status(503).send({ error: "System not running." });
-        }
-        ticketPool.stopped = true; // Stop the ticketPool
-        logMessage("System has been stopped manually.");
-        res.send({ message: "System stopped successfully" });
-    });
-
-
     logMessage("\nStarting system...\n");
 
     vendors.forEach(vendor => vendor.start());
     customers.forEach(customer => customer.start());
 
     res.send({ message: "System configured successfully", metrics: ticketPool.getMetrics(), logs });
+});
+
+app.post('/stopSystem', (req, res) => {
+    if (ticketPool) {
+        ticketPool.stopped = true;
+        logMessage("System has been stopped by the user.");
+        return res.send({ message: "System stopped successfully." });
+    }
+    res.status(400).send({ error: "System is not running." });
 });
 
 app.get('/metrics', (req, res) => {

@@ -71,6 +71,25 @@ export default function EventPage() {
         }
     };
 
+    const handleStop = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/stopSystem", {
+                method: "POST",
+            });
+
+            if (response.ok) {
+                setSystemStopped(true);
+                setStatus("System stopped successfully.");
+            } else {
+                setStatus("Error stopping the system.");
+                console.error("Backend error:", await response.text());
+            }
+        } catch (error) {
+            console.error("Failed to connect to backend:", error);
+            setStatus("Failed to connect to backend.");
+        }
+    };
+
     useEffect(() => {
         const fetchMetrics = async () => {
             try {
@@ -158,6 +177,13 @@ export default function EventPage() {
                         className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     >
                         Start System
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleStop}
+                        className="w-full mt-4 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                    >
+                        Stop System
                     </button>
                     {status && <p className="text-center text-red-500 mt-2">{status}</p>}
                 </form>
