@@ -91,7 +91,7 @@ Contains the main server logic, including:
 - Ticket management classes (`Ticket`, `TicketPool`, `Vendor`, `Customer`).
 - API routes for configuring the system and retrieving metrics.
 
-### Frontend (`Main.jsx, App.jsx, LandingPage,jsx, HomePage.jsx, EventPage.jsx`)
+### Frontend (`Main.jsx`, `App.jsx`, `LandingPage.jsx`, `HomePage.jsx`, `EventPage.jsx`)
 
 Handles user input for configuring the ticketing system and displays real-time metrics and logs.
 
