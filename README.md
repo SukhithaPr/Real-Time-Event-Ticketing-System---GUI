@@ -31,8 +31,8 @@ Ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
-   cd <repository-directory>
+   git clone <https://github.com/SukhithaPr/Real-Time-Event-Ticketing-System---GUI.git>
+   cd <Real-Time-Event-Ticketing-System---GUI>
    ```
 
 2. Install dependencies for the backend:
