@@ -1,4 +1,8 @@
 import React, { useState, useEffect } from "react";
+import { Line } from "react-chartjs-2";
+import { Chart, registerables } from "chart.js";
+
+Chart.register(...registerables);
 
 export default function EventPage() {
     const [totalTickets, setTotalTickets] = useState("");
@@ -7,8 +11,28 @@ export default function EventPage() {
     const [maxCapacity, setMaxCapacity] = useState("");
     const [status, setStatus] = useState("");
     const [metrics, setMetrics] = useState(null);
-    const [logs, setLogs] = useState([]); // Store all logs
-    const [systemStopped, setSystemStopped] = useState(false); // Track if the system stopped
+    const [logs, setLogs] = useState([]);
+    const [systemStopped, setSystemStopped] = useState(false);
+
+    const [chartData, setChartData] = useState({
+        labels: [],
+        datasets: [
+            {
+                label: "Tickets in Pool",
+                data: [],
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+            },
+            {
+                label: "Tickets Sold",
+                data: [],
+                borderColor: "rgba(255, 99, 132, 1)",
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                fill: true,
+            },
+        ],
+    });
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,10 +59,10 @@ export default function EventPage() {
             if (response.ok) {
                 const data = await response.json();
                 setMetrics(data.metrics || {});
-                setLogs(data.logs || []); // Ensure logs is always an array
+                setLogs(data.logs || []);
                 setStatus("System configured successfully!");
             } else {
-                setStatus("Error configuring system.(All parameters must be positive numbers.)");
+                setStatus("Error configuring system.");
                 console.error("Backend error:", await response.text());
             }
         } catch (error) {
@@ -48,16 +72,30 @@ export default function EventPage() {
     };
 
     useEffect(() => {
-        const fetchLogs = async () => {
+        const fetchMetrics = async () => {
             try {
                 const response = await fetch("http://localhost:8080/metrics");
                 if (response.ok) {
                     const data = await response.json();
+                    setMetrics(data || {});
 
-                    setMetrics(data || {}); // Handle empty metrics gracefully
+                    setChartData((prevData) => {
+                        const updatedLabels = [...prevData.labels, new Date().toLocaleTimeString()];
+                        const poolData = [...prevData.datasets[0].data, data.poolSize];
+                        const soldData = [...prevData.datasets[1].data, data.ticketsSold];
+                        return {
+                            labels: updatedLabels,
+                            datasets: [
+                                { ...prevData.datasets[0], data: poolData },
+                                { ...prevData.datasets[1], data: soldData },
+                            ],
+                        };
+                    });
+
                     if (Array.isArray(data.logs)) {
-                        setLogs((prevLogs) => [...prevLogs, ...data.logs.slice(prevLogs.length)]); // Append new logs
+                        setLogs((prevLogs) => [...prevLogs, ...data.logs.slice(prevLogs.length)]);
                     }
+
                     if (data.stopped) {
                         setSystemStopped(true);
                     }
@@ -71,39 +109,17 @@ export default function EventPage() {
 
         const interval = setInterval(() => {
             if (!systemStopped) {
-                fetchLogs();
+                fetchMetrics();
             } else {
-                clearInterval(interval); // Stop polling when the system stops
+                clearInterval(interval);
             }
         }, 1000);
 
         return () => clearInterval(interval);
     }, [systemStopped]);
 
-    // Add this function to handle stopping the system
-    const handleStopSystem = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/stopSystem", {
-                method: "POST",
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setStatus("System stopped successfully!");
-                setSystemStopped(true); // Ensure polling stops
-            } else {
-                setStatus("Error stopping system.");
-                console.error("Backend error:", await response.text());
-            }
-        } catch (error) {
-            console.error("Failed to stop system:", error);
-            setStatus("Failed to connect to backend.");
-        }
-    };
-
     return (
         <div className="p-10 bg-gradient-to-br from-indigo-50 to-indigo-100 min-h-screen">
-            {/* Form Section */}
             <div className="space-y-1 p-8 bg-white rounded-lg shadow-xl w-full max-w-md mx-auto">
                 <h1 className="text-2xl pb-5 font-semibold text-center text-black">
                     Configure Ticketing System
@@ -143,19 +159,10 @@ export default function EventPage() {
                     >
                         Start System
                     </button>
-                    <button
-                        type="button"
-                        onClick={handleStopSystem}
-                        className="w-full py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        disabled={systemStopped}
-                    >
-                        Stop System
-                    </button>
                     {status && <p className="text-center text-red-500 mt-2">{status}</p>}
                 </form>
             </div>
 
-            {/* Metrics Section */}
             <div className="mt-8 w-full max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-xl">
                 {metrics === null ? (
                     <p className="text-center text-gray-500">Loading metrics...</p>
@@ -170,7 +177,13 @@ export default function EventPage() {
                 )}
             </div>
 
-            {/* Logs Section */}
+            <div className="mt-8">
+                <h2 className="text-lg font-semibold">Real-Time Analytics</h2>
+                <div style={{ height: "400px" }}>
+                    <Line data={chartData} options={{ responsive: true, maintainAspectRatio: false }} />
+                </div>
+            </div>
+
             <div className="mt-8 w-full max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-xl">
                 <h2 className="text-lg font-semibold">Logs</h2>
                 <div className="bg-gray-100 p-4 rounded-lg overflow-y-auto" style={{ maxHeight: "200px" }}>
@@ -185,7 +198,6 @@ export default function EventPage() {
                     )}
                 </div>
             </div>
-
         </div>
     );
 }
