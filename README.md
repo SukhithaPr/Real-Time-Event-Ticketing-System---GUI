@@ -52,13 +52,13 @@ Ensure you have the following installed:
 1. Start the backend server:
    ```bash
    cd backend
-   node server.js
+   npm run dev
    ```
 
 2. Start the frontend application:
    ```bash
    cd frontend
-   npm start
+   npm run dev
    ```
 
 3. Access the application at `http://localhost:5173`.
