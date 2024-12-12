@@ -8,7 +8,7 @@ const products = [
         href: '/EventPage',
         imageSrc: 'https://scontent.fcmb2-2.fna.fbcdn.net/v/t39.30808-6/466505399_867358052217212_4911383765135743027_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=v5GtT_F6LHwQ7kNvgFSYYq8&_nc_zt=23&_nc_ht=scontent.fcmb2-2.fna&_nc_gid=A9si5X7y6ltPhfIpKZ-b1zM&oh=00_AYBze2v5GCbTgMDVssS7ufNUU-az9lCMEF6Q9UBP0Hz-cg&oe=676009E0',
         imageAlt: "Spandana Event Poster",
-        price: "$20",
+        price: "Rs.1000",
     },
     {
         id: 2,
@@ -16,7 +16,7 @@ const products = [
         href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/Awarjana/Awarjana%201x1xx-1730088977503.jpg',
         imageAlt: "Awarjana Event Poster",
-        price: "$15",
+        price: "Rs.1500",
     },
     {
         id: 3,
@@ -24,7 +24,7 @@ const products = [
         href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/Parampara%20Live%20In%20Concert/1080%20x%201080%20DESIGN%201-1730370079854.jpg',
         imageAlt: "Parampara Event Poster",
-        price: "$30",
+        price: "Rs.2000",
     },
     {
         id: 4,
@@ -32,7 +32,7 @@ const products = [
         href: '/EventPage',
         imageSrc: 'https://assets.mytickets.lk/images/events/SHAAN%20&%20SANKA%20LIVE%20IN%20SRI%20LANKA/without%20all%20details%201080x1080%20(2)-1730545551510.jpg',
         imageAlt: "SHAAN & SANKA Event Poster",
-        price: "$25",
+        price: "Rs.5000",
     },
 ];
 
@@ -54,15 +54,12 @@ export default function HomePage() {
                             />
                             <div className="mt-4 flex justify-between">
                                 <div>
-                                    <h3 className="text-sm text-gray-700">
+                                    <h3 className="text-sm text-gray-900">
                                         <Link to={product.href}>
                                             <span aria-hidden="true" className="absolute inset-0" />
                                             {product.name}
                                         </Link>
                                     </h3>
-                                    <p className="mt-1 text-sm text-gray-500">
-                                        {product.color || "No color information available"}
-                                    </p>
                                 </div>
                                 <p className="text-sm font-medium text-gray-900">
                                     {product.price || "Price not specified"}
